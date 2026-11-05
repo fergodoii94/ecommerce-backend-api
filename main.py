@@ -19,6 +19,13 @@ class OrderCreate(BaseModel):
 
     @field_validator("product_ids")
     @classmethod
+    def product_ids_must_be_positive(cls, value: list[int]) -> list[int]:
+        if any(product_id <= 0 for product_id in value):
+            raise ValueError("Product IDs must be positive integers")
+        return value
+
+    @field_validator("product_ids")
+    @classmethod
     def product_ids_must_be_unique(cls, value: list[int]) -> list[int]:
         if len(value) != len(set(value)):
             raise ValueError("Duplicate product IDs are not supported")
