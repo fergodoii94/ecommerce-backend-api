@@ -20,6 +20,15 @@ A small Python/FastAPI learning project for a product catalog and order-submissi
 - Decimal arithmetic for prices.
 - Pytest API tests and Ruff linting in GitHub Actions.
 
+## Engineering decisions
+
+| Decision | Why it was chosen | Trade-off |
+|---|---|---|
+| Calculate totals on the server | The client sends product IDs only; prices and totals come from the catalog. | Prices are still held in process memory. |
+| Use `Decimal` for prices | Avoid binary floating-point rounding in monetary calculations. | API responses serialize decimal values as strings. |
+| Validate all product IDs and stock before changing inventory | Unknown or unavailable products are rejected before stock is decremented. | The in-memory implementation is not safe against concurrent orders. |
+| Keep catalog and orders in memory | Make the prototype easy to run and inspect without database setup. | State is lost on restart; there are no database transactions or durable order records. |
+
 ## Tech stack
 
 - Python 3.11+
