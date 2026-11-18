@@ -16,7 +16,8 @@ A small Python/FastAPI learning project for a product catalog and order-submissi
 
 - `GET /products`: returns the sample catalog.
 - `POST /orders`: validates product IDs, rejects duplicate or unknown products, checks stock, calculates the total on the server and decrements stock.
-- Pydantic validation for product data and order requests.
+- Pydantic validation for product data and order requests, including strict integer IDs and rejection of unexpected fields.
+- An application factory with isolated in-memory state per app instance, making API tests independent of shared global state.
 - Decimal arithmetic for prices.
 - Pytest API tests and Ruff linting in GitHub Actions.
 
@@ -27,7 +28,7 @@ A small Python/FastAPI learning project for a product catalog and order-submissi
 | Calculate totals on the server | The client sends product IDs only; prices and totals come from the catalog. | Prices are still held in process memory. |
 | Use `Decimal` for prices | Avoid binary floating-point rounding in monetary calculations. | API responses serialize decimal values as strings. |
 | Validate all product IDs and stock before changing inventory | Unknown or unavailable products are rejected before stock is decremented. | The in-memory implementation is not safe against concurrent orders. |
-| Keep catalog and orders in memory | Make the prototype easy to run and inspect without database setup. | State is lost on restart; there are no database transactions or durable order records. |
+| Use an application factory and per-instance state | Keep the prototype easy to run while giving each app/test instance an independent catalog and order list. | State is still process-local and lost on restart; this does not add database transactions or durable records. |
 
 ## Tech stack
 
