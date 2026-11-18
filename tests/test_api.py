@@ -1,5 +1,7 @@
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
+
+from main import create_app
 
 
 def test_list_products_returns_catalog(client):
