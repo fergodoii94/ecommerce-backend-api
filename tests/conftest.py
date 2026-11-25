@@ -1,9 +1,10 @@
 import pytest
+from fastapi.testclient import TestClient
 
-from main import orders, products
+from main import create_app
 
 
-@pytest.fixture(autouse=True)
-def reset_in_memory_state():
-    products[0].stock = 10
-    orders.clear()
+@pytest.fixture
+def client():
+    with TestClient(create_app()) as test_client:
+        yield test_client
