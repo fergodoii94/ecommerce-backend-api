@@ -31,3 +31,29 @@ def test_failed_order_does_not_create_order_or_decrement_stock(client):
     assert response.status_code == 409
     assert client.app.state.orders == []
     assert client.app.state.products[0].stock == 0
+
+
+
+@pytest.mark.parametrize("product_ids", [[True], [1.0]])
+def test_order_rejects_non_integer_json_ids(client, product_ids):
+    response = client.post("/orders", json={"product_ids": product_ids})
+    assert response.status_code == 422
+    assert client.get("/products").json()[0]["stock"] == 10
+
+
+def test_separate_app_instances_do_not_share_catalog_or_orders():
+    from fastapi.testclient import TestClient
+
+    from main import create_app
+
+    with TestClient(create_app()) as first_client, TestClient(create_app()) as second_client:
+        first_order = first_client.post("/orders", json={"product_ids": [1]})
+
+        assert first_order.status_code == 201
+        assert first_order.json()["order_id"] == 1
+        assert first_client.get("/products").json()[0]["stock"] == 9
+
+        assert second_client.get("/products").json()[0]["stock"] == 10
+        second_order = second_client.post("/orders", json={"product_ids": [1]})
+        assert second_order.status_code == 201
+        assert second_order.json()["order_id"] == 1
