@@ -17,7 +17,7 @@ A small Python/FastAPI learning project for a product catalog and order-submissi
 - `GET /products`: returns the sample catalog.
 - `POST /orders`: validates product IDs, rejects duplicate or unknown products, checks stock, calculates the total on the server and decrements stock.
 - Pydantic validation for product data and order requests, including strict integer IDs and rejection of unexpected fields.
-- An application factory with isolated in-memory state per app instance, making API tests independent of shared global state.
+- An application factory with isolated in-memory state per app instance, making API tests independent of shared global state; tests verify separate app instances do not share inventory or order IDs.
 - Decimal arithmetic for prices.
 - Pytest API tests and Ruff linting in GitHub Actions.
 
